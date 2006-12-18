@@ -1,0 +1,9 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource>
+        <file alias="HELP">../docs/HELP.en</file>
+    </qresource>
+    <qresource lang="fr">
+        <file alias="HELP">../docs/HELP.fr</file>
+    </qresource>
+</RCC>

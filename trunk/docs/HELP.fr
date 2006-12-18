@@ -1,0 +1,7 @@
+Welcome to Phrasis
+Open-source text editor for productive writers
+The Writers' Productivity tool.
+
+(c) 2006 Jacob R Rideout, <phrasis@jacobrideout.net>
+
+Translate to french

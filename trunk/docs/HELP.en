@@ -1,0 +1,81 @@
+Welcome to Phrasis
+Open-source text editor for productive writers
+The Writers' Productivity tool.
+
+(c) 2006 Jacob R Rideout, <phrasis@jacobrideout.net>
+
+Synopsis
+Phrasis is a is a stripped down text editor. We want to remove any feature that might hinder the productivity of a professional (or serious amateur) writer and add any feature that would increase the efficiency (of must our users). Therefore, we've created an interface with only the bare essentials, no menus, no formating features and no nonsense.
+
+Please comment and help improve the product. Phrasis only edits text files, so other formats must be converted to text or they show up as gobbledygook. We support Unicode, so non-English and multilingual documents are acceptable.
+
+Please report all bugs and feature requests to:
+http://code.google.com/p/phrasis/
+
+Table of Contents
+1. Basic Usage
+2. TODO
+3. Known Bugs
+4. Installation
+
+1. Basic Usage
+Commands:
+Currently, Phrasis uses platform default keybindings, the bindings shown below are the default on most platforms.
+
+F1		Show this help
+Ctrl + N		New File
+Ctrl + O		Open File
+Ctrl + S		Save File
+Ctrl + P		Print the current file
+Ctrl + B		Select Display Font (default bold keybinding) 
+Ctrl + U		Open Settings (this is the configuration file, you edit the text file itself) (default underline keybinding) 
+Ctrl + Q		Quit the application
+Ctrl + F		Toggle fullscreen
+Ctrl + +		Enlarge the font (usually this requires ctrl, shift & the = key)
+Ctrl + -		Shrink the font
+
+Additionally, you can navigate the file with standard keys, such as page down/up, the arrow keys, etc...
+
+2. TODO:
+(I intend to implement these soon)
+
+* Change the statistics algorithms & and new ones
+* Make the % of the screen used for the text configurable.
+* Spellcheck (as an optional feature)
+* Better bidi support (I've used this program, just fine with Hebrew!)
+* Make the scroll bar pretty
+* figure out a good way to present notifications, and status. Should we list whether or not a file has save changes in the statistics section?
+* Autosaving & system crash saving (autorecovery)
+* Whatever my users want!
+   (pending sanity check)
+
+Do we want ...
+* multiple files support, or is the one at time model more efficient?
+* find/replace?
+* to automatically open the last open document?
+* to disable/re-enable the mouse with a shortcut?
+* context menus (right click menus) with the commands available (open,prints,etc...)
+
+3. Known Bugs:
+There is some problems with the scrollbar and the Qt plastique style, (default on KDE) this is likely due to a Qt bug.
+
+4. Installation
+
+1. You may have received a platform specific binary, install as instructed on the website or wherever you received the binary from
+
+2. Source install
+
+Extract the tar.bz2 file, usually with a command like:
+
+	tar jxvf phrasis-1.0.tar.bz2
+
+change the newly extracted directory
+
+	cd phrasis-1.0
+
+Ensure you have  Qt 4.2.1 or latter installed. Run qmake, and then make
+
+	qmake
+	make
+
+Phrasis should appear in the bin directory. You may move this file wherever you like.
