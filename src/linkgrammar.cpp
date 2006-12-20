@@ -64,7 +64,18 @@ bool linkGrammar::parseSentence(const QString text) const
         result = true;
 
     }
-
+    
+    if (result)
+    {
+        
+    
+        Linkage       linkage;
+        char *        diagram;
+	    linkage = linkage_create(0, sent, m_Opts);
+	    printf("%s\n", diagram = linkage_print_diagram(linkage));
+	    delete [] diagram;
+        linkage_delete(linkage);
+    }
     /***********************
 
     QString errStr;

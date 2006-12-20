@@ -55,6 +55,9 @@ void grammarCheck::check( )
 
         ok = m_checker->parseSentence(m_sentences.at(i));
 
+        //static bool mok = true;
+        //ok = mok = !mok;
+
         m_results.append(ok);
         
         qDebug() << "[Grammar] Correct? " << ok;

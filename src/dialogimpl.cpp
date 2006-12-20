@@ -238,12 +238,12 @@ void DialogImpl::checkGrammer(const QTextBlock& block)
     QList<bool> checked = gc->results();
 
     // apply format to results
-    for (int i=1; i<boundries.count(); ++i)
+    for (int i=0; i<sentences.count(); ++i)
     {
-        if (!checked.at(i-1))
+        if (!checked.at(i))
         {
-            sentence.setPosition(boundries[i-1], QTextCursor::MoveAnchor);
-            sentence.setPosition(boundries[i], QTextCursor::KeepAnchor);
+            sentence.setPosition(boundries[i], QTextCursor::MoveAnchor);
+            sentence.setPosition(boundries[i+1], QTextCursor::KeepAnchor);
             sentence.setCharFormat ( tf );
         }
     }
@@ -369,7 +369,7 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
     //Compute sentences
     QTextBlock block = textEdit->document()->findBlock ( position );
     const int sents = -1; //sentenceCount(block);
-    // checkGrammer(block);
+    checkGrammer(block);
     // highlightSentences(block);
 
     label->setText(tr("Chars\n"
