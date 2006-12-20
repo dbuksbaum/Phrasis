@@ -5,18 +5,12 @@ linkGrammar::linkGrammar(Dictionary dict, Parse_Options opts)
 {
     m_Opts = opts;
     m_Dict = dict;
-
-    // 1 second max parse time
-    parse_options_set_max_parse_time(m_Opts, 1);
 }
 
 linkGrammar::linkGrammar()
 {
     m_Opts = parse_options_create();
     m_Dict = dictionary_create_lang("en");
-
-    // 1 second max parse time
-    parse_options_set_max_parse_time(m_Opts, 1);
 }
 
 linkGrammar::~linkGrammar()
@@ -45,6 +39,9 @@ bool linkGrammar::parseSentence(const QString text) const
         return true;
     }
 
+    // 2 second max parse time
+    parse_options_set_max_parse_time(m_Opts, 2);
+
     /* First parse with cost 0 or 1 and no null links */
     parse_options_set_disjunct_cost(m_Opts, 2);
     parse_options_set_min_null_count(m_Opts, 0);
@@ -56,25 +53,27 @@ bool linkGrammar::parseSentence(const QString text) const
     quint32 num_linkages = sentence_parse(sent, m_Opts);
     bool result = (num_linkages >= 1);
 
-    if (TRUE == parse_options_timer_expired(m_Opts))
+    // print diagram
+    if (result)
+    {
+        Linkage linkage;
+        char* diagram;
+
+        linkage = linkage_create(0, sent, m_Opts);
+        diagram = linkage_print_diagram(linkage);
+
+        qDebug("%s", diagram);
+
+        delete [] diagram;
+        linkage_delete(linkage);
+    }
+
+    if ( parse_options_timer_expired(m_Opts) )
     {
         qDebug() << "[Grammar] Timer expired! Mark valid anyway.";
         // Mark valid if it's too hard. FIXME. We can attempt to recover
         // by tweaking paramters once we know what we're doing.
         result = true;
-
-    }
-    
-    if (result)
-    {
-        
-    
-        Linkage       linkage;
-        char *        diagram;
-	    linkage = linkage_create(0, sent, m_Opts);
-	    printf("%s\n", diagram = linkage_print_diagram(linkage));
-	    delete [] diagram;
-        linkage_delete(linkage);
     }
     /***********************
 

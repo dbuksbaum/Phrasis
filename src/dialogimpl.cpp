@@ -217,7 +217,7 @@ void DialogImpl::checkGrammer(const QTextBlock& block)
     tf.setUnderlineStyle(QTextCharFormat::DotLine);
 
     QList<int> boundries = sentenceBoundries( block );
-    if (boundries.count() <=2)
+    if (boundries.count() < 2)
         return;
 
     QTextCursor sentence(block);
