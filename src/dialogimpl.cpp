@@ -1,10 +1,12 @@
 #include <QtGui>
 
 #include "dialogimpl.h"
+#include "previewform.h"
+#include "grammarcheck.h"
 
 //
 DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
-        : QDialog(parent, f)
+        : QDialog(parent, f), sentenceTally(0)
 {
     setupUi(this);
     //showFullScreen();
@@ -14,6 +16,11 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
 
     setObjectName("window");
     readSettings();
+    findCodecs();
+    previewForm = new PreviewForm(this);
+    previewForm->setCodecList(codecs);
+    
+    gc = new grammarCheck;
 
     new QShortcut ( QKeySequence(QKeySequence::New), this, SLOT( newFile() ) );
     new QShortcut ( QKeySequence(QKeySequence::Open), this, SLOT( open() ) );
@@ -32,9 +39,13 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     new QShortcut ( QKeySequence(tr("Ctrl+Q", "Quit Application")) , this, SLOT( close() ) );
     new QShortcut ( QKeySequence(tr("Ctrl+F", "Toggle Fullscreen")) , this, SLOT( togleFullScreen() ) );
 
+    new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
+
 #ifdef Q_OS_WIN32
+
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
 #else
+
     QSettings settings;
 #endif
 
@@ -48,14 +59,33 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     connect(fw, SIGNAL(fileChanged(const QString)),
             this, SLOT(readSettings()));
 
-    connect(textEdit->document(), SIGNAL(contentsChanged()),
-            this, SLOT(documentWasModified()));
+    connect(textEdit->document(), SIGNAL(contentsChange(int,int,int)),
+            this, SLOT(documentWasModified(int,int,int)));
 
     setCurrentFile("");
-    documentWasModified();
+    documentWasModified(0,0,0);
 
 }
 
+DialogImpl::~DialogImpl()
+{
+ if (gc)
+     delete gc;
+}
+
+void DialogImpl::test()
+{
+    // textEdit->textCursor().insertHtml("<b>bold text</b><br><h2>title</h2><i>italix</i>");
+    const QChar *chars = textEdit->document()->toPlainText().unicode();
+
+    for (int i=0;i<10;++i)
+    {
+        QString s;
+        s.setNum(chars[i].unicode(),2);
+        qDebug() << "char=" << s;
+    }
+
+}
 void DialogImpl::print()
 {
     QTextDocument* document = textEdit->document();
@@ -79,6 +109,7 @@ void DialogImpl::options()
 #ifdef Q_OS_WIN32
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
 #else
+
     QSettings settings;
 #endif
 
@@ -135,7 +166,11 @@ void DialogImpl::newFile()
 {
     if (maybeSave())
     {
+
+        textEdit->document()->blockSignals(true);
         textEdit->clear();
+        textEdit->document()->blockSignals(false);
+
         setCurrentFile("");
     }
 }
@@ -172,17 +207,170 @@ bool DialogImpl::saveAs()
     return saveFile(fileName);
 }
 
-void DialogImpl::documentWasModified()
+void DialogImpl::checkGrammer(const QTextBlock& block)
 {
+    clearFormating( block );
+
+    // set formating
+    QTextCharFormat tf;
+    tf.setUnderlineColor( QColor(Qt::cyan) );
+    tf.setUnderlineStyle(QTextCharFormat::DotLine);
+
+    QList<int> boundries = sentenceBoundries( block );
+    if (boundries.count() <=2)
+        return;
+
+    QTextCursor sentence(block);
+    QStringList sentences;
+
+    // create sentence list for parser
+    for (int i=1; i<boundries.count(); ++i)
+    {
+        sentence.setPosition(boundries[i-1], QTextCursor::MoveAnchor);
+        sentence.setPosition(boundries[i], QTextCursor::KeepAnchor);
+
+        sentences.append( sentence.selectedText().simplified() );
+    }
+
+    // check grammer  
+    gc->setSentences(sentences);
+    
+    QList<bool> checked = gc->results();
+
+    // apply format to results
+    for (int i=1; i<boundries.count(); ++i)
+    {
+        if (!checked.at(i-1))
+        {
+            sentence.setPosition(boundries[i-1], QTextCursor::MoveAnchor);
+            sentence.setPosition(boundries[i], QTextCursor::KeepAnchor);
+            sentence.setCharFormat ( tf );
+        }
+    }
+}
+
+void DialogImpl::highlightSentences(const QTextBlock& block)
+{
+    highlightSentences( sentenceBoundries( block ) );
+}
+
+void DialogImpl::highlightSentences(QList<int> boundries)
+{
+    QTextCharFormat stripe[2];
+    stripe[0].setFontUnderline ( true );
+    stripe[0].setUnderlineColor( QColor(Qt::red) );
+    stripe[1].setFontUnderline ( true );
+    stripe[1].setUnderlineColor( QColor(Qt::blue) );
+
+    int flop=0;
+
+    QTextCursor sentence(textEdit->document());
+    sentence.setPosition(boundries[0]);
+
+    clearFormating( sentence.block() );
+
+    for (int i=1; i<boundries.count(); ++i)
+    {
+        sentence.setPosition(boundries[i], QTextCursor::KeepAnchor);
+        sentence.setCharFormat ( stripe[flop=!flop] );
+
+        sentence.setPosition(boundries[i], QTextCursor::MoveAnchor);
+    }
+
+}
+
+void DialogImpl::clearFormating(const QTextBlock& block)
+{
+    textEdit->document()->blockSignals(true);
+
+    QTextCharFormat tf;
+    tf.setFontUnderline ( false );
+
+    QTextCursor tc(block);
+    tc.movePosition( QTextCursor::EndOfBlock, QTextCursor::KeepAnchor );
+
+    tc.setCharFormat ( tf );
+
+    textEdit->document()->blockSignals(false);
+}
+/*
+    // spell
+    tf.setUnderlineColor( QColor(Qt::red) );
+    tf.setUnderlineStyle(QTextCharFormat::WaveUnderline);
+*/
+int DialogImpl::sentenceCount(QTextBlock& block) const
+{
+    return sentenceBoundries(block).count()-1;
+}
+
+QList<int> DialogImpl::sentenceBoundries(const QTextBlock& block) const
+{
+
+    // QRegExp rx("("+pre_punct+"[\\.\\?\\!]["+post_punct+"]?\\s+[A-Z])|(.$)");
+
+
+    // check for sentence barriers
+
+    // ensure that the punctuation comes after a word, not an abreviation
+    static QString pre_punct = "[^A-Z][0-9a-z\\(\\)]{2}";
+    // allow quotes, or parenthesis/brackets to come after a period
+    static QString post_punct = QRegExp::escape("\"[]()") + "\\x201C\\x201D\\x201E\\x201F";
+    //                            (end of a word) (punctuation)  (after punct)  (spaces) (new word w/Capital)
+    static QString end_of_sentence = pre_punct + "[\\.\\?\\!][" + post_punct + "]?\\s+[A-Z]";
+    // the end of a block
+    static QString end_of_para = ".$";
+
+    QRegExp boundryRX("("+end_of_sentence+")|("+end_of_para+")");
+    boundryRX.setPatternSyntax(QRegExp::RegExp2);
+
+    // create textcursor, with position at the begining of the block
+    QTextCursor boundry(block);
+
+    QList<int> sentences;
+    sentences.append( boundry.position() );
+
+    while (1)
+    {
+        boundry = textEdit->document()->find( boundryRX, boundry);
+
+        if ( boundry == QTextCursor() )
+            break;
+
+        int newPosition = boundry.position();
+        newPosition = boundry.atBlockEnd() ? newPosition : newPosition-1;
+
+        sentences.append( newPosition );
+        boundry.setPosition( newPosition );
+
+        if ( boundry.atBlockEnd() )
+            break;
+    }
+    return sentences;
+}
+
+void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAdded)
+{
+    Q_UNUSED(charsRemoved);
+    Q_UNUSED(charsAdded);
+
     setWindowModified(textEdit->document()->isModified());
 
     const QString text( textEdit->document()->toPlainText() );
 
-    QStringList list = text.split(" ",QString::SkipEmptyParts);
+    //Compute words
+    QRegExp wordsRX("\\s+");
+    QStringList list = text.split(wordsRX);
     const int words = list.count();
 
+    //Compute paras
     list = text.split("\n",QString::SkipEmptyParts);
     const int paras = list.count();
+
+    //Compute sentences
+    QTextBlock block = textEdit->document()->findBlock ( position );
+    const int sents = -1; //sentenceCount(block);
+    // checkGrammer(block);
+    // highlightSentences(block);
 
     label->setText(tr("Chars\n"
                       "%1\n"
@@ -190,9 +378,12 @@ void DialogImpl::documentWasModified()
                       "%2\n"
                       "Paras\n"
                       "%3\n"
+                      "\n"
+                      "Sentences\n"
+                      "%4\n"
                       "\n\n",
                       "Statistics"
-                     ).arg( text.size() ).arg( words ).arg( paras )
+                     ).arg( text.size() ).arg( words ).arg( paras ).arg( sents )
                   );
 }
 
@@ -201,8 +392,10 @@ void DialogImpl::readSettings()
 #ifdef Q_OS_WIN32
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
 #else
+
     QSettings settings;
 #endif
+
     QPoint pos = settings.value("WindowState/TopLeftPosition", QPoint(100, 100)).toPoint();
     QSize size = settings.value("WindowState/WindowSize", QSize(300, 200)).toSize();
     QString fontS = settings.value("Font/Font_Settings", textEdit->document()->defaultFont() ).toString();
@@ -237,6 +430,7 @@ void DialogImpl::writeSettings()
 #ifdef Q_OS_WIN32
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
 #else
+
     QSettings settings;
 #endif
 
@@ -267,6 +461,45 @@ bool DialogImpl::maybeSave()
     return true;
 }
 
+void DialogImpl::findCodecs()
+{
+    QMap<QString, QTextCodec *> codecMap;
+    QRegExp iso8859RegExp("ISO[- ]8859-([0-9]+).*");
+
+    foreach (int mib, QTextCodec::availableMibs())
+    {
+        QTextCodec *codec = QTextCodec::codecForMib(mib);
+
+        QString sortKey = codec->name().toUpper();
+        int rank;
+
+        if (sortKey.startsWith("UTF-8"))
+        {
+            rank = 1;
+        }
+        else if (sortKey.startsWith("UTF-16"))
+        {
+            rank = 2;
+        }
+        else if (iso8859RegExp.exactMatch(sortKey))
+        {
+            if (iso8859RegExp.cap(1).size() == 1)
+                rank = 3;
+            else
+                rank = 4;
+        }
+        else
+        {
+            rank = 5;
+        }
+        sortKey.prepend(QChar('0' + rank));
+
+        codecMap.insert(sortKey, codec);
+    }
+    codecs = codecMap.values();
+}
+
+
 void DialogImpl::loadFile(const QString &fileName)
 {
     QFile file(fileName);
@@ -280,8 +513,24 @@ void DialogImpl::loadFile(const QString &fileName)
     }
 
     QTextStream in(&file);
+    in.setAutoDetectUnicode( false );
+
+    QByteArray data = file.read(512);
+    previewForm->setEncodedData(data);
+
+    if (previewForm->exec())
+    {
+        QTextCodec *codec = QTextCodec::codecForMib(previewForm->mib());
+        in.setCodec(codec);
+    }
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    in.seek(0);
+    textEdit->document()->blockSignals(true);
     textEdit->setPlainText(in.readAll());
+    textEdit->document()->blockSignals(false);
+
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
@@ -300,6 +549,8 @@ bool DialogImpl::saveFile(const QString &fileName)
     }
 
     QTextStream out(&file);
+    out.setCodec("UTF-8");
+
     QApplication::setOverrideCursor(Qt::WaitCursor);
     out << textEdit->toPlainText();
     QApplication::restoreOverrideCursor();

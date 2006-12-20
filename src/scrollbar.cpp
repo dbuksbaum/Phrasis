@@ -13,8 +13,8 @@ void scrollBar::paintEvent ( QPaintEvent * event )
 {
     //QPainter painter(this);
     //painter.setRenderHint(QPainter::Antialiasing);
-   // painter.translate(width() / 2, height() / 2);
-   // painter.scale(side / 200.0, side / 200.0);
+    // painter.translate(width() / 2, height() / 2);
+    // painter.scale(side / 200.0, side / 200.0);
 
-   QScrollBar::paintEvent(event);
+    QScrollBar::paintEvent(event);
 }

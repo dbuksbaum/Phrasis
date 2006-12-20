@@ -5,10 +5,10 @@
 //
 class scrollBar : public QScrollBar
 {
-Q_OBJECT
+    Q_OBJECT
 public:
-	scrollBar(QWidget * parent = 0);
+    scrollBar(QWidget * parent = 0);
 protected:
-	void paintEvent ( QPaintEvent * event );
+    void paintEvent ( QPaintEvent * event );
 };
 #endif
