@@ -1,6 +1,7 @@
 TEMPLATE =   app
 QT +=   gui \
-  core
+  core \
+  svg
 CONFIG +=   qt \
   warn_on \
   console \
@@ -15,13 +16,17 @@ HEADERS +=   src/dialogimpl.h \
   src/scrollbar.h \
   src/previewform.h \
   src/grammarcheck.h \
-  src/linkgrammar.h
+  src/linkgrammar.h \
+  src/fadebutton.h \
+  src/mouseawareframe.h
 SOURCES +=   src/dialogimpl.cpp \
   src/main.cpp \
   src/scrollbar.cpp \
   src/previewform.cpp \
   src/grammarcheck.cpp \
-  src/linkgrammar.cpp
+  src/linkgrammar.cpp \
+  src/fadebutton.cpp \
+  src/mouseawareframe.cpp
 RESOURCES +=   resources/resources.qrc
 LIBS +=   $$system(pkg-config \
   --libs \

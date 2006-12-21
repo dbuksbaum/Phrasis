@@ -26,9 +26,6 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     setupUi(this);
     //showFullScreen();
 
-    textEdit->setVerticalScrollBar( vScrollBar );
-    vScrollBar->show();
-
     setObjectName("window");
     readSettings();
     findCodecs();
@@ -36,6 +33,21 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     previewForm->setCodecList(codecs);
 
     gc = new grammarCheck;
+
+    //qApp->setCursorFlashTime(0)   // set the cursor not to flash
+
+
+    topArrow->load(tr(":/icons/up.svg"));
+    bottomArrow->load(tr(":/icons/down.svg"));
+
+    connect(sideFrame, SIGNAL( leaving() ),
+            topArrow, SLOT( leave() ));
+    connect(sideFrame, SIGNAL( leaving() ),
+            bottomArrow, SLOT( leave() ));
+    connect(sideFrame, SIGNAL( entering() ),
+            topArrow, SLOT( enter() ));
+    connect(sideFrame, SIGNAL( entering() ),
+            bottomArrow, SLOT( enter() ));
 
     new QShortcut ( QKeySequence(QKeySequence::New), this, SLOT( newFile() ) );
     new QShortcut ( QKeySequence(QKeySequence::Open), this, SLOT( open() ) );
@@ -79,7 +91,6 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
 
     setCurrentFile("");
     documentWasModified(0,0,0);
-
 }
 
 DialogImpl::~DialogImpl()
@@ -387,19 +398,19 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
     checkGrammer(block);
     // highlightSentences(block);
 
-    label->setText(tr("Chars\n"
-                      "%1\n"
-                      "Words\n"
-                      "%2\n"
-                      "Paras\n"
-                      "%3\n"
-                      "\n"
-                      "Sentences\n"
-                      "%4\n"
-                      "\n\n",
-                      "Statistics"
-                     ).arg( text.size() ).arg( words ).arg( paras ).arg( sents )
-                  );
+    statsLabel->setText(tr("Chars\n"
+                           "%1\n"
+                           "Words\n"
+                           "%2\n"
+                           "Paras\n"
+                           "%3\n"
+                           "\n"
+                           "Sentences\n"
+                           "%4\n"
+                           "\n\n",
+                           "Statistics"
+                          ).arg( text.size() ).arg( words ).arg( paras ).arg( sents )
+                       );
 }
 
 void DialogImpl::readSettings()

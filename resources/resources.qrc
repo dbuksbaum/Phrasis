@@ -1,9 +1,15 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
-    <qresource>
-        <file alias="HELP">../docs/HELP.en</file>
+    <qresource prefix="/" >
+        <file alias="HELP" >../docs/HELP.en</file>
     </qresource>
-    <qresource lang="fr">
-        <file alias="HELP">../docs/HELP.fr</file>
+    <qresource prefix="/" lang="fr">
+        <file alias="HELP" >../docs/HELP.fr</file>
     </qresource>
+
+    <qresource prefix="/icons" >
+        <file alias="down.svg" >down.svg</file>
+        <file alias="up.svg" >up.svg</file>
+    </qresource>
+
 </RCC>

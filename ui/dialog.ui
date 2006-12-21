@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>726</width>
-    <height>588</height>
+    <width>773</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -26,7 +26,7 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="QLabel" name="label" >
+    <widget class="QLabel" name="statsLabel" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>1</hsizetype>
@@ -47,16 +47,6 @@
        <height>16777215</height>
       </size>
      </property>
-     <property name="text" >
-      <string>Chars
-100
-Words
-27
-Paras
-2
-
-</string>
-     </property>
      <property name="textFormat" >
       <enum>Qt::PlainText</enum>
      </property>
@@ -74,7 +64,7 @@ Paras
       <enum>QFrame::NoFrame</enum>
      </property>
      <property name="verticalScrollBarPolicy" >
-      <enum>Qt::ScrollBarAsNeeded</enum>
+      <enum>Qt::ScrollBarAlwaysOff</enum>
      </property>
      <property name="horizontalScrollBarPolicy" >
       <enum>Qt::ScrollBarAlwaysOff</enum>
@@ -85,35 +75,141 @@ Paras
     </widget>
    </item>
    <item>
-    <widget class="scrollBar" name="vScrollBar" >
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
-     <property name="sizeHint" >
+    <widget class="mouseAwareFrame" name="sideFrame" >
+     <property name="minimumSize" >
       <size>
        <width>100</width>
-       <height>20</height>
+       <height>16</height>
       </size>
      </property>
-    </spacer>
+     <property name="frameShape" >
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="fadeButton" native="1" name="topArrow" >
+          <property name="minimumSize" >
+           <size>
+            <width>64</width>
+            <height>64</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>64</width>
+            <height>64</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>64</width>
+            <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="fadeButton" native="1" name="bottomArrow" >
+          <property name="minimumSize" >
+           <size>
+            <width>64</width>
+            <height>64</height>
+           </size>
+          </property>
+          <property name="maximumSize" >
+           <size>
+            <width>64</width>
+            <height>64</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Minimum</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>36</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>scrollBar</class>
-   <extends>QScrollBar</extends>
-   <header>../src/scrollbar.h</header>
+   <class>fadeButton</class>
+   <extends>QWidget</extends>
+   <header>../src/fadebutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>mouseAwareFrame</class>
+   <extends>QFrame</extends>
+   <header>../src/mouseawareframe.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
