@@ -72,14 +72,14 @@ bool linkGrammar::parseSentence(const QString text) const
     if (result)
     {
         Linkage linkage;
-        char* diagram;
+        //char* diagram;
 
         linkage = linkage_create(0, sent, m_Opts);
-        diagram = linkage_print_diagram(linkage);
+        //diagram = linkage_print_diagram(linkage);
 
-        qDebug("%s", diagram);
+        //qDebug("%s", diagram);
 
-        delete [] diagram;
+        //delete [] diagram;
         linkage_delete(linkage);
     }
 

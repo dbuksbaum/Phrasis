@@ -66,16 +66,13 @@ void grammarCheck::check( )
 
     for (int i=0; i<m_sentences.count(); ++i)
     {
-        qDebug() << "[Grammar] Checking: " << m_sentences.at(i).toLatin1().data();
+       // qDebug() << "[Grammar] Checking: " << m_sentences.at(i).toLatin1().data();
 
         ok = m_checker->parseSentence(m_sentences.at(i));
 
-        //static bool mok = true;
-        //ok = mok = !mok;
-
         m_results.append(ok);
 
-        qDebug() << "[Grammar] Correct? " << ok;
-        qDebug() << "=======================";
+       // qDebug() << "[Grammar] Correct? " << ok;
+       // qDebug() << "=======================";
     }
 }

@@ -434,7 +434,7 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
 
     //Compute words
     QRegExp wordsRX("\\s+");
-    QStringList list = text.split(wordsRX);
+    QStringList list = text.split(wordsRX,QString::SkipEmptyParts);
     const int words = list.count();
 
     //Compute paras
