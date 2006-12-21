@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>773</width>
-    <height>564</height>
+    <width>785</width>
+    <height>503</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -82,6 +82,12 @@
        <height>16</height>
       </size>
      </property>
+     <property name="maximumSize" >
+      <size>
+       <width>100</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="frameShape" >
       <enum>QFrame::NoFrame</enum>
      </property>
@@ -92,6 +98,22 @@
       <property name="spacing" >
        <number>0</number>
       </property>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeType" >
+         <enum>QSizePolicy::Minimum</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>18</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
       <item>
        <layout class="QVBoxLayout" >
         <property name="margin" >
@@ -189,7 +211,7 @@
         </property>
         <property name="sizeHint" >
          <size>
-          <width>36</width>
+          <width>18</width>
           <height>20</height>
          </size>
         </property>
@@ -202,14 +224,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>fadeButton</class>
-   <extends>QWidget</extends>
-   <header>../src/fadebutton.h</header>
-  </customwidget>
-  <customwidget>
    <class>mouseAwareFrame</class>
    <extends>QFrame</extends>
    <header>../src/mouseawareframe.h</header>
+  </customwidget>
+  <customwidget>
+   <class>fadeButton</class>
+   <extends>QWidget</extends>
+   <header>../src/fadebutton.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

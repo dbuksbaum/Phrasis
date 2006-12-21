@@ -406,12 +406,9 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
                            "%2\n"
                            "Paras\n"
                            "%3\n"
-                           "\n"
-                           "Sentences\n"
-                           "%4\n"
                            "\n\n",
                            "Statistics"
-                          ).arg( text.size() ).arg( words ).arg( paras ).arg( sents )
+                          ).arg( text.size() ).arg( words ).arg( paras )
                        );
 }
 
