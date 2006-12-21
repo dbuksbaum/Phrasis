@@ -5,6 +5,7 @@ QT +=   gui \
 CONFIG +=   qt \
   warn_on \
   console \
+  link_pkgconfig \
   debug_and_release
 DESTDIR +=   bin
 OBJECTS_DIR +=   build
@@ -18,7 +19,8 @@ HEADERS +=   src/dialogimpl.h \
   src/grammarcheck.h \
   src/linkgrammar.h \
   src/fadebutton.h \
-  src/mouseawareframe.h
+  src/mouseawareframe.h \
+  src/spellcheck.h
 SOURCES +=   src/dialogimpl.cpp \
   src/main.cpp \
   src/scrollbar.cpp \
@@ -26,8 +28,8 @@ SOURCES +=   src/dialogimpl.cpp \
   src/grammarcheck.cpp \
   src/linkgrammar.cpp \
   src/fadebutton.cpp \
-  src/mouseawareframe.cpp
+  src/mouseawareframe.cpp \
+  src/spellcheck.cpp
 RESOURCES +=   resources/resources.qrc
-LIBS +=   $$system(pkg-config \
-  --libs \
-  link-grammar)
+PKGCONFIG += link-grammar enchant
+

@@ -18,6 +18,7 @@
 #include "dialogimpl.h"
 #include "previewform.h"
 #include "grammarcheck.h"
+#include "spellcheck.h"
 
 //
 DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
@@ -74,10 +75,8 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
    // new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
 
 #ifdef Q_OS_WIN32
-
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
 #else
-
     QSettings settings;
 #endif
 
@@ -96,6 +95,19 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
 
     setCurrentFile("");
     documentWasModified(0,0,0);
+    
+    spellCheck test;
+    
+    /*
+    test.setLang(test.langs().at(1));
+    test.checkWord("Hello");
+    test.checkWord("Helllo");
+    qDebug() << "[SUGGS] " << test.suggestions();
+    test.checkWord("Rideout");
+    //test.addToPersonalDict("Rideout");
+    test.checkWord("Rideout");
+    */
+    
 }
 
 DialogImpl::~DialogImpl()
@@ -396,7 +408,7 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
 
     //Compute sentences
     QTextBlock block = textEdit->document()->findBlock ( position );
-    const int sents = -1; //sentenceCount(block);
+//    const int sents = -1; //sentenceCount(block);
     checkGrammer(block);
     // highlightSentences(block);
 
