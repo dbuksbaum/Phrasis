@@ -26,7 +26,7 @@ void spellCheck::list_dicts (const char * const lang_tag,
     spellCheck* checker = static_cast<spellCheck *> (user_data);
 
     checker->buffer.append( QString::fromAscii(lang_tag) );
-    
+
     Q_UNUSED(provider_name);
     Q_UNUSED(provider_desc);
     Q_UNUSED(provider_file);
@@ -99,7 +99,7 @@ QStringList spellCheck::suggestions(QString word)
         }
         word = lastWord;
     }
-    
+
     std::vector<std::string> suggs;
     dict->suggest (word.toUtf8().data(), suggs);
 
@@ -118,23 +118,25 @@ QStringList spellCheck::suggestions(QString word)
 
 bool spellCheck::addToSession(QString word)
 {
-    qDebug() << "[Spelling] Adding " << word << " to session dictionary.";;
+    qDebug() << "[Spelling] Adding " << word << " to session dictionary.";
+    ;
     dict->add_to_session (word.toUtf8().data());
     return true;
 }
 
 bool spellCheck::addToPersonalDict(QString word)
 {
-    qDebug() << "[Spelling] Adding " << word << " to personal dictionary.";;
+    qDebug() << "[Spelling] Adding " << word << " to personal dictionary.";
+    ;
     dict->add_to_pwl (word.toUtf8().data());
     return true;
 }
 
 
 
-        // test personal wordlist dictionaries
-        //   dict = broker->request_pwl_dict ("test.pwl");
-        ////describe_dict (dict);
-        ////run_dict_tests (dict);
-        //   delete dict;
-   
+// test personal wordlist dictionaries
+//   dict = broker->request_pwl_dict ("test.pwl");
+////describe_dict (dict);
+////run_dict_tests (dict);
+//   delete dict;
+

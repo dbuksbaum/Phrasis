@@ -25,7 +25,7 @@ fadeButton::fadeButton( QWidget * parent, const QString & file)
     setAutoRepeat(true);
     setAutoRepeatDelay(250);
     setAutoRepeatInterval(100);
-    
+
     svg = new QSvgRenderer(this);
     load(file);
 

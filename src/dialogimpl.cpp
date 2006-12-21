@@ -75,8 +75,10 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     // new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
 
 #ifdef Q_OS_WIN32
+
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
 #else
+
     QSettings settings;
 #endif
 
@@ -243,7 +245,7 @@ bool DialogImpl::saveAs()
 
 void DialogImpl::checkGrammer(const QTextBlock& block)
 {
-    clearFormating( block );
+    //clearFormating( block );
 
     // set formating
     QTextCharFormat tf;
@@ -285,7 +287,7 @@ void DialogImpl::checkGrammer(const QTextBlock& block)
 
 void DialogImpl::checkSpelling(const QTextBlock& block)
 {
-    clearFormating( block );
+    //clearFormating( block );
 
     // set formating
     QTextCharFormat tf;
@@ -441,10 +443,12 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
 
     //Compute sentences
     QTextBlock block = textEdit->document()->findBlock ( position );
-//    const int sents = -1; //sentenceCount(block);
+    //    const int sents = -1; //sentenceCount(block);
 
+    clearFormating( block );
+    checkGrammer(block);
     checkSpelling(block);
-    // checkGrammer(block);
+
     // highlightSentences(block);
 
     statsLabel->setText(tr("Chars\n"
