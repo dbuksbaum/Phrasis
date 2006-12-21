@@ -1,3 +1,18 @@
+/****************************************************************************
+**
+** Copyright (C) 2006 Jacob R Rideout <jacob@jacobrideout.net>
+** All rights reserved.
+**
+** This file may be used under the terms of the GNU General Public
+** License version 2.0 as published by the Free Software Foundation
+** and appearing in the file LICENSE.GPL included in the packaging of
+** this file.
+**
+** This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+** WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+**
+****************************************************************************/
+
 #include <QtGui>
 
 #include "dialogimpl.h"
@@ -19,7 +34,7 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     findCodecs();
     previewForm = new PreviewForm(this);
     previewForm->setCodecList(codecs);
-    
+
     gc = new grammarCheck;
 
     new QShortcut ( QKeySequence(QKeySequence::New), this, SLOT( newFile() ) );
@@ -69,8 +84,8 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
 
 DialogImpl::~DialogImpl()
 {
- if (gc)
-     delete gc;
+    if (gc)
+        delete gc;
 }
 
 void DialogImpl::test()
@@ -232,9 +247,9 @@ void DialogImpl::checkGrammer(const QTextBlock& block)
         sentences.append( sentence.selectedText().simplified() );
     }
 
-    // check grammer  
+    // check grammer
     gc->setSentences(sentences);
-    
+
     QList<bool> checked = gc->results();
 
     // apply format to results
