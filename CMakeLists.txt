@@ -9,6 +9,7 @@ SET( SOURCE_FILES
     ./src/linkgrammar.cpp
     ./src/fadebutton.cpp
     ./src/mouseawareframe.cpp
+    ./src/spellcheck.cpp
 )
 
 SET( MOC_HDRS_FILES
@@ -37,6 +38,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules )
 # to date than what usually is inclued with cmake
 FIND_PACKAGE( Qt4-KDE REQUIRED )
 FIND_PACKAGE( LinkGrammar REQUIRED )
+FIND_PACKAGE( Enchant REQUIRED )
 
 INCLUDE( ${QT_USE_FILE} )
 
@@ -48,7 +50,14 @@ INCLUDE_DIRECTORIES( ${CMAKE_BINARY_DIR}
                      ${X11_INCLUDE_DIR}
                      ${LINK_GRAMMER_INCLUDE_DIR}
                      ${QT_QTSVG_INCLUDE_DIR}
+                     ${ENCHANT_INCLUDE_DIR}
                    )
 
 ADD_EXECUTABLE( phrasis ${SOURCE_FILES} ${MOC_SRCS} ${RC_SRCS} ${UI_HDRS} )
-TARGET_LINK_LIBRARIES( phrasis ${QT_LIBRARIES} ${QT_QTSVG_LIBRARY} ${X11_LIBRARIES} ${LINK_GRAMMER_LIBRARIES} )
+TARGET_LINK_LIBRARIES( phrasis
+                       ${QT_LIBRARIES}
+                       ${QT_QTSVG_LIBRARY}
+                       ${X11_LIBRARIES}
+                       ${LINK_GRAMMER_LIBRARIES}
+                       ${ENCHANT_LIBRARIES}
+                     )

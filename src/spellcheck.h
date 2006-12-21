@@ -16,8 +16,6 @@
 #ifndef SPELLCHECK
 #define SPELLCHECK
 
-//#include <QString>
-//#include <enchant++.h>
 class QString;
 class QMutex;
 
