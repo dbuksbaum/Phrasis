@@ -39,8 +39,8 @@ bool linkGrammar::parseSentence(const QString text) const
         return true;
     }
 
-    // 2 second max parse time
-    parse_options_set_max_parse_time(m_Opts, 2);
+    // 1 second max parse time
+    parse_options_set_max_parse_time(m_Opts, 1);
 
     /* First parse with cost 0 or 1 and no null links */
     parse_options_set_disjunct_cost(m_Opts, 2);
