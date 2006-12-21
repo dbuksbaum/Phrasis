@@ -27,8 +27,11 @@ SET( RCS_FILES
 # enable warnings
 ADD_DEFINITIONS( -Wall )
 
-SET(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake/modules)
-FIND_PACKAGE( Qt4 REQUIRED )
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/modules )
+
+# I am tracking the Qt4 module from kde svn, it is more up
+# to date than what usually is inclued with cmake
+FIND_PACKAGE( Qt4-KDE REQUIRED )
 FIND_PACKAGE( LinkGrammar REQUIRED )
 
 INCLUDE( ${QT_USE_FILE} )
