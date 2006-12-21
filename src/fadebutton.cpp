@@ -21,7 +21,11 @@ fadeButton::fadeButton( QWidget * parent, const QString & file)
         : QAbstractButton(parent)
 {
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    setMouseTracking(true);
+    //setMouseTracking(true);
+    setAutoRepeat(true);
+    setAutoRepeatDelay(250);
+    setAutoRepeatInterval(40);
+    
     svg = new QSvgRenderer(this);
     load(file);
 

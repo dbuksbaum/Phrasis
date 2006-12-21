@@ -40,6 +40,11 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     topArrow->load(tr(":/icons/up.svg"));
     bottomArrow->load(tr(":/icons/down.svg"));
 
+    connect(topArrow, SIGNAL( pressed() ),
+            this, SLOT( up() ));
+    connect(bottomArrow, SIGNAL( pressed() ),
+            this, SLOT( down() ));
+
     connect(sideFrame, SIGNAL( leaving() ),
             topArrow, SLOT( leave() ));
     connect(sideFrame, SIGNAL( leaving() ),
@@ -66,7 +71,7 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     new QShortcut ( QKeySequence(tr("Ctrl+Q", "Quit Application")) , this, SLOT( close() ) );
     new QShortcut ( QKeySequence(tr("Ctrl+F", "Toggle Fullscreen")) , this, SLOT( togleFullScreen() ) );
 
-    new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
+   // new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
 
 #ifdef Q_OS_WIN32
 
@@ -99,19 +104,20 @@ DialogImpl::~DialogImpl()
         delete gc;
 }
 
-void DialogImpl::test()
+void DialogImpl::up()
 {
-    // textEdit->textCursor().insertHtml("<b>bold text</b><br><h2>title</h2><i>italix</i>");
-    const QChar *chars = textEdit->document()->toPlainText().unicode();
-
-    for (int i=0;i<10;++i)
-    {
-        QString s;
-        s.setNum(chars[i].unicode(),2);
-        qDebug() << "char=" << s;
-    }
+    QScrollBar* sb = textEdit->verticalScrollBar();
+    sb->triggerAction(QAbstractSlider::SliderSingleStepSub);
 
 }
+
+void DialogImpl::down()
+{
+    QScrollBar* sb = textEdit->verticalScrollBar();
+    //sb->setValue(sb->value()+1);
+    sb->triggerAction(QAbstractSlider::SliderSingleStepAdd);
+}
+
 void DialogImpl::print()
 {
     QTextDocument* document = textEdit->document();
@@ -154,16 +160,12 @@ void DialogImpl::font()
 
 void DialogImpl::zoomIn()
 {
-    QFont font = textEdit->document()->defaultFont();
-    font.setPointSize(font.pointSize()+2);
-    textEdit->document()->setDefaultFont(font);
+    textEdit->zoomIn(2);
 }
 
 void DialogImpl::zoomOut()
 {
-    QFont font = textEdit->document()->defaultFont();
-    font.setPointSize(font.pointSize()-2);
-    textEdit->document()->setDefaultFont(font);
+    textEdit->zoomOut(2);
 }
 
 void DialogImpl::togleFullScreen()

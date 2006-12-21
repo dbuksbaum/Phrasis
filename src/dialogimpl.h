@@ -44,7 +44,8 @@ private slots:
     void readSettings();
     void font();
     void help();
-    void test();
+    void up();
+    void down();
 
 private:
     void writeSettings();
