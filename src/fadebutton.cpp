@@ -24,7 +24,7 @@ fadeButton::fadeButton( QWidget * parent, const QString & file)
     //setMouseTracking(true);
     setAutoRepeat(true);
     setAutoRepeatDelay(250);
-    setAutoRepeatInterval(40);
+    setAutoRepeatInterval(100);
     
     svg = new QSvgRenderer(this);
     load(file);

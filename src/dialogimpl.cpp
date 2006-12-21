@@ -22,7 +22,7 @@
 
 //
 DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
-        : QDialog(parent, f), sentenceTally(0)
+        : QWidget(parent, f), sentenceTally(0)
 {
     setupUi(this);
     //showFullScreen();
@@ -72,7 +72,7 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     new QShortcut ( QKeySequence(tr("Ctrl+Q", "Quit Application")) , this, SLOT( close() ) );
     new QShortcut ( QKeySequence(tr("Ctrl+F", "Toggle Fullscreen")) , this, SLOT( togleFullScreen() ) );
 
-   // new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
+    // new QShortcut ( QKeySequence(tr("Ctrl+T", "Test")) , this, SLOT( test() ) );
 
 #ifdef Q_OS_WIN32
     QSettings settings(QDir::homePath()+"/Application Data/"+qApp->applicationName()+".ini", QSettings::IniFormat);
@@ -95,39 +95,32 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
 
     setCurrentFile("");
     documentWasModified(0,0,0);
-    
-    spellCheck test;
-    
-    /*
-    test.setLang(test.langs().at(1));
-    test.checkWord("Hello");
-    test.checkWord("Helllo");
-    qDebug() << "[SUGGS] " << test.suggestions();
-    test.checkWord("Rideout");
-    //test.addToPersonalDict("Rideout");
-    test.checkWord("Rideout");
-    */
-    
+
+    sc = new spellCheck();
+    sc->setLang("en_US");
 }
 
 DialogImpl::~DialogImpl()
 {
     if (gc)
         delete gc;
+    if (sc)
+        delete sc;
+
 }
 
 void DialogImpl::up()
 {
     QScrollBar* sb = textEdit->verticalScrollBar();
-    sb->triggerAction(QAbstractSlider::SliderSingleStepSub);
-
+    sb->setValue(sb->value()-25);
+    //sb->triggerAction(QAbstractSlider::SliderSingleStepSub);
 }
 
 void DialogImpl::down()
 {
     QScrollBar* sb = textEdit->verticalScrollBar();
-    //sb->setValue(sb->value()+1);
-    sb->triggerAction(QAbstractSlider::SliderSingleStepAdd);
+    sb->setValue(sb->value()+25);
+    //sb->triggerAction(QAbstractSlider::SliderSingleStepAdd);
 }
 
 void DialogImpl::print()
@@ -190,6 +183,7 @@ void DialogImpl::togleFullScreen()
 
 void DialogImpl::closeEvent(QCloseEvent *event)
 {
+    qDebug() << "closing";
     if (maybeSave())
     {
         fw->disconnect();
@@ -289,6 +283,49 @@ void DialogImpl::checkGrammer(const QTextBlock& block)
     }
 }
 
+void DialogImpl::checkSpelling(const QTextBlock& block)
+{
+    clearFormating( block );
+
+    // set formating
+    QTextCharFormat tf;
+    tf.setUnderlineColor( QColor(Qt::red) );
+    tf.setUnderlineStyle(QTextCharFormat::WaveUnderline);
+
+    const QString text( block.text() );
+
+    // nothing to check
+    if (text==QString())
+        return;
+
+    QRegExp wordsRX("\\s+");
+    QStringList words = text.split(wordsRX,QString::SkipEmptyParts);
+
+    //qDebug() << "[Parser] Wordlist: "<< words;
+
+    QTextCursor wordCursor(block);
+    QRegExp strip_punct("(^\\W*|\\W*$)");
+    int blockOff = block.position();
+    int offset = 0;
+    int start = 0;
+
+    QString word;
+    foreach(word,words)
+    {
+        //qDebug() << "[Parser] Checking "<< word << " ...";
+
+        start = text.indexOf( word, offset );
+        offset = start + word.size();
+
+        if (!sc->checkWord( word.remove( strip_punct )))
+        {
+            wordCursor.setPosition(blockOff + start, QTextCursor::MoveAnchor);
+            wordCursor.setPosition(blockOff + offset, QTextCursor::KeepAnchor);
+            wordCursor.setCharFormat ( tf );
+        }
+    }
+}
+
 void DialogImpl::highlightSentences(const QTextBlock& block)
 {
     highlightSentences( sentenceBoundries( block ) );
@@ -324,7 +361,7 @@ void DialogImpl::clearFormating(const QTextBlock& block)
     textEdit->document()->blockSignals(true);
 
     QTextCharFormat tf;
-    tf.setFontUnderline ( false );
+    //tf.setFontUnderline ( false );
 
     QTextCursor tc(block);
     tc.movePosition( QTextCursor::EndOfBlock, QTextCursor::KeepAnchor );
@@ -333,11 +370,7 @@ void DialogImpl::clearFormating(const QTextBlock& block)
 
     textEdit->document()->blockSignals(false);
 }
-/*
-    // spell
-    tf.setUnderlineColor( QColor(Qt::red) );
-    tf.setUnderlineStyle(QTextCharFormat::WaveUnderline);
-*/
+
 int DialogImpl::sentenceCount(QTextBlock& block) const
 {
     return sentenceBoundries(block).count()-1;
@@ -409,7 +442,9 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
     //Compute sentences
     QTextBlock block = textEdit->document()->findBlock ( position );
 //    const int sents = -1; //sentenceCount(block);
-    checkGrammer(block);
+
+    checkSpelling(block);
+    // checkGrammer(block);
     // highlightSentences(block);
 
     statsLabel->setText(tr("Chars\n"
@@ -439,7 +474,7 @@ void DialogImpl::readSettings()
     QString color = settings.value("Font/Color-Foreground", "#00ff00" ).toString();
     QString back = settings.value("Font/Color-Background", "black" ).toString();
 
-    setStyleSheet(QString("QDialog#window, QTextEdit#textEdit {"
+    setStyleSheet(QString("QWidget#window, QTextEdit#textEdit {"
                           "color: %1;"
                           "background-color: %2;"
                           "selection-color: %2;"

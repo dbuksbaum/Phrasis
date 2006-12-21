@@ -22,8 +22,9 @@ class QShortcut;
 class QFileSystemWatcher;
 class PreviewForm;
 class grammarCheck;
+class spellCheck;
 
-class DialogImpl : public QDialog, public Ui::Dialog
+class DialogImpl : public QWidget, public Ui::Dialog
 {
     Q_OBJECT
 public:
@@ -61,6 +62,7 @@ private:
     void highlightSentences(QList<int> boundries);
     void highlightSentences(const QTextBlock& block);
     void checkGrammer(const QTextBlock& block);
+    void checkSpelling(const QTextBlock& block);
 
     PreviewForm *previewForm;
     QList<QTextCodec *> codecs;
@@ -68,6 +70,7 @@ private:
     QString curFile;
     QFileSystemWatcher* fw;
     grammarCheck* gc;
+    spellCheck* sc;
 protected:
     void closeEvent(QCloseEvent *event);
 

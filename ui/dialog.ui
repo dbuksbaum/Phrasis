@@ -1,6 +1,7 @@
 <ui version="4.0" >
+ <author>Jacob R Rideout</author>
  <class>Dialog</class>
- <widget class="QDialog" name="Dialog" >
+ <widget class="QWidget" name="Dialog" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -14,9 +15,6 @@
     <width>300</width>
     <height>200</height>
    </size>
-  </property>
-  <property name="windowTitle" >
-   <string>Dialog</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
@@ -222,6 +220,7 @@
    </item>
   </layout>
  </widget>
+ <layoutdefault spacing="0" margin="0" />
  <customwidgets>
   <customwidget>
    <class>mouseAwareFrame</class>
@@ -234,6 +233,7 @@
    <header>../src/fadebutton.h</header>
   </customwidget>
  </customwidgets>
+ <includes/>
  <resources/>
  <connections/>
 </ui>

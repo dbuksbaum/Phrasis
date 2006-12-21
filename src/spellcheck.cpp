@@ -79,7 +79,7 @@ bool spellCheck::checkWord(QString word)
     }
     bool ok = dict->check( word.toUtf8().data() );
     lastWord = word;
-    qDebug("[Spelling] Checking: %s (%d)", word.toUtf8().data(), ok);
+    //qDebug("[Spelling] Checking: %s (%d)", word.toUtf8().data(), ok);
     return ok;
 }
 
