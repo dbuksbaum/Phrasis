@@ -20,7 +20,8 @@ HEADERS +=   src/dialogimpl.h \
   src/linkgrammar.h \
   src/fadebutton.h \
   src/mouseawareframe.h \
-  src/spellcheck.h
+  src/spellcheck.h \
+  src/textbreaks.h
 SOURCES +=   src/dialogimpl.cpp \
   src/main.cpp \
   src/scrollbar.cpp \
@@ -29,7 +30,8 @@ SOURCES +=   src/dialogimpl.cpp \
   src/linkgrammar.cpp \
   src/fadebutton.cpp \
   src/mouseawareframe.cpp \
-  src/spellcheck.cpp
+  src/spellcheck.cpp \
+  src/textbreaks.cpp
 RESOURCES +=   resources/resources.qrc
-PKGCONFIG += link-grammar enchant
-
+PKGCONFIG +=   link-grammar \
+  enchant

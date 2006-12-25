@@ -12,4 +12,7 @@
         <file alias="up.svg" >up.svg</file>
     </qresource>
 
+    <qresource prefix="/ucd" >
+        <file>all.map</file>
+    </qresource>
 </RCC>

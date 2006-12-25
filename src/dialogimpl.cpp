@@ -19,8 +19,8 @@
 #include "previewform.h"
 #include "grammarcheck.h"
 #include "spellcheck.h"
+#include "textbreaks.h"
 
-//
 DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
         : QWidget(parent, f), sentenceTally(0)
 {
@@ -36,7 +36,6 @@ DialogImpl::DialogImpl( QWidget * parent, Qt::WFlags f)
     gc = new grammarCheck;
 
     //qApp->setCursorFlashTime(0)   // set the cursor not to flash
-
 
     topArrow->load(tr(":/icons/up.svg"));
     bottomArrow->load(tr(":/icons/down.svg"));
@@ -300,32 +299,34 @@ void DialogImpl::checkSpelling(const QTextBlock& block)
     if (text==QString())
         return;
 
-    QRegExp wordsRX("\\s+");
-    QStringList words = text.split(wordsRX,QString::SkipEmptyParts);
 
     //qDebug() << "[Parser] Wordlist: "<< words;
 
-    QTextCursor wordCursor(block);
-    QRegExp strip_punct("(^\\W*|\\W*$)");
-    int blockOff = block.position();
-    int offset = 0;
-    int start = 0;
+    textBreaks::wordBreaks(text);
 
-    QString word;
-    foreach(word,words)
-    {
-        //qDebug() << "[Parser] Checking "<< word << " ...";
+    /*
+        QTextCursor wordCursor(block);
 
-        start = text.indexOf( word, offset );
-        offset = start + word.size();
+        int blockOff = block.position();
+        int offset = 0;
+        int start = 0;
 
-        if (!sc->checkWord( word.remove( strip_punct )))
+        QString word;
+        foreach(word,words)
         {
-            wordCursor.setPosition(blockOff + start, QTextCursor::MoveAnchor);
-            wordCursor.setPosition(blockOff + offset, QTextCursor::KeepAnchor);
-            wordCursor.setCharFormat ( tf );
+            //qDebug() << "[Parser] Checking "<< word << " ...";
+
+            start = text.indexOf( word, offset );
+            offset = start + word.size();
+
+            if (!sc->checkWord( word.remove( strip_punct ) ))
+            {
+                wordCursor.setPosition(blockOff + start, QTextCursor::MoveAnchor);
+                wordCursor.setPosition(blockOff + offset, QTextCursor::KeepAnchor);
+                wordCursor.setCharFormat ( tf );
+            }
         }
-    }
+        */
 }
 
 void DialogImpl::highlightSentences(const QTextBlock& block)
@@ -446,7 +447,7 @@ void DialogImpl::documentWasModified(int position, int charsRemoved, int charsAd
     //    const int sents = -1; //sentenceCount(block);
 
     clearFormating( block );
-    checkGrammer(block);
+    //checkGrammer(block);
     checkSpelling(block);
 
     // highlightSentences(block);
@@ -610,6 +611,8 @@ void DialogImpl::loadFile(const QString &fileName)
     QApplication::restoreOverrideCursor();
 
     setCurrentFile(fileName);
+    textEdit->setAlignment(Qt::AlignJustify);
+
 }
 
 bool DialogImpl::saveFile(const QString &fileName)

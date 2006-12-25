@@ -29,7 +29,7 @@ fadeButton::fadeButton( QWidget * parent, const QString & file)
     svg = new QSvgRenderer(this);
     load(file);
 
-    timeLine = new QTimeLine(650,this);
+    timeLine = new QTimeLine(325,this);
     timeLine->setFrameRange ( 0, 255 );
     timeLine->setUpdateInterval(30);
 
